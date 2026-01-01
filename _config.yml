@@ -39,4 +39,8 @@ exclude:
   - portugol.xml
   - Gemfile
   - Gemfile.lock
+  - package.json
+  - package-lock.json
+  - server.js
+  - node_modules/
 

@@ -1,0 +1,15 @@
+# Dependências Node.js (apenas para desenvolvimento local)
+node_modules/
+
+# Arquivos de desenvolvimento local
+package-lock.json
+
+# Jekyll (caso use localmente)
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+vendor/
+.bundle/
+Gemfile.lock
+
