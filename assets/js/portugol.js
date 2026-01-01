@@ -29,7 +29,7 @@ window.hljsPortugol = function(hljs) {
   // Tipos de dados
   const TYPES = [
     'Inteiro', 'Real', 'Caractere', 'Logico', 
-    'Vetor', 'Matriz'
+    'Vetor', 'Matriz', 'Texto'
   ];
 
   // Literais e operadores lógicos

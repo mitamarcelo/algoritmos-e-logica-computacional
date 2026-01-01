@@ -13,11 +13,14 @@ Entrada Inteiro m
 
 Inicio
     // Declaração de variáveis auxiliares
-    Vetor posAtual <- [posInicial[0], posInicial[1]]
+    Vetor Inteiro posAtual
     Texto acao
 
-    // Cláusulas de guarda para exceções
+    // Atribui à posição atual o valor da posição inicial
+    posAtual[0] <- posInicial[0]
+    posAtual[1] <- posInicial[1]
 
+    // Cláusulas de guarda para exceções
     // Verificação de entradas:
     
     // Verificação do tamanho do tabuleiro 
@@ -39,18 +42,18 @@ Inicio
 
     // Verificação da validade do vetor posição inicial
     Se posInicial[0] < 1 OU
-          posInicial[0] > n OU
-          posInicial[1] < 1 OU
-          posInicial[1] > m Entao
+    posInicial[0] > n OU
+    posInicial[1] < 1 OU
+    posInicial[1] > m Entao
         Escreva ("Posição inicial inválida")
         Retorne
     FimSe
 
     // Verificação da validade do vetor posição final
     Se posFinal[0] < 1 OU
-          posFinal[0] > n OU
-          posFinal[1] < 1 OU
-          posFinal[1] > m Entao
+    posFinal[0] > n OU
+    posFinal[1] < 1 OU
+    posFinal[1] > m Entao
         Escreva ("Posição final inválida")
         Retorne
     FimSe
