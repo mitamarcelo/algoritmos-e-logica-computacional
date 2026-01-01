@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE language SYSTEM "language.dtd">
+<!-- Portugol syntax highlighting for Pandoc (Kate format) -->
+<language name="portugol" version="1" kateversion="5.0" section="Scripts" extensions="*.ptg;*.portugol" mimetype="text/x-portugol" author="Auto-generated" license="MIT">
+  <highlighting>
+    <list name="structure">
+      <item>Algoritmo</item>
+      <item>Inicio</item>
+      <item>Fim</item>
+      <item>Entrada</item>
+      <item>Saida</item>
+      <item>Var</item>
+      <item>Procedimento</item>
+      <item>Funcao</item>
+      <item>Retorne</item>
+    </list>
+    <list name="controlflow">
+      <item>Se</item>
+      <item>Senao</item>
+      <item>SenaoSe</item>
+      <item>Entao</item>
+      <item>FimSe</item>
+      <item>Enquanto</item>
+      <item>FimEnquanto</item>
+      <item>Para</item>
+      <item>FimPara</item>
+      <item>De</item>
+      <item>Ate</item>
+      <item>Passo</item>
+      <item>Faca</item>
+      <item>ParaCada</item>
+      <item>Em</item>
+      <item>FimParaCada</item>
+      <item>Repita</item>
+      <item>AteQue</item>
+      <item>Escolha</item>
+      <item>Caso</item>
+      <item>Caso Outro</item>
+      <item>FimEscolha</item>
+      <item>Pare</item>
+      <item>Continue</item>
+    </list>
+    <list name="io">
+      <item>Leia</item>
+      <item>Escreva</item>
+      <item>Informe</item>
+      <item>Imprima</item>
+      <item>Mostre</item>
+      <item>Inicialize</item>
+      <item>Atualize</item>
+    </list>
+    <list name="types">
+      <item>Inteiro</item>
+      <item>Real</item>
+      <item>Caractere</item>
+      <item>Logico</item>
+      <item>Vetor</item>
+      <item>Matriz</item>
+      <item>verdadeiro</item>
+      <item>falso</item>
+      <item>nulo</item>
+    </list>
+    <list name="operators">
+      <item>E</item>
+      <item>OU</item>
+      <item>NAO</item>
+      <item>Mod</item>
+      <item>Div</item>
+    </list>
+    <contexts>
+      <context name="Normal" attribute="Normal Text" lineEndContext="#stay">
+        <keyword attribute="Structure" context="#stay" String="structure"/>
+        <keyword attribute="Control Flow" context="#stay" String="controlflow"/>
+        <keyword attribute="IO" context="#stay" String="io"/>
+        <keyword attribute="Data Type" context="#stay" String="types"/>
+        <keyword attribute="Operator" context="#stay" String="operators"/>
+        <DetectChar attribute="String" context="String" char="&quot;"/>
+        <Detect2Chars attribute="Comment" context="CommentLine" char="/" char1="/"/>
+        <Detect2Chars attribute="Comment" context="CommentBlock" char="/" char1="*"/>
+        <RegExpr attribute="Assignment" context="#stay" String="&lt;-"/>
+        <RegExpr attribute="Number" context="#stay" String="\b[0-9]+(\.[0-9]+)?\b"/>
+      </context>
+      <context name="String" attribute="String" lineEndContext="#pop">
+        <DetectChar attribute="String" context="#pop" char="&quot;"/>
+      </context>
+      <context name="CommentLine" attribute="Comment" lineEndContext="#pop">
+      </context>
+      <context name="CommentBlock" attribute="Comment" lineEndContext="#stay">
+        <Detect2Chars attribute="Comment" context="#pop" char="*" char1="/"/>
+      </context>
+    </contexts>
+    <itemDatas>
+      <itemData name="Normal Text" defStyleNum="dsNormal"/>
+      <itemData name="Structure" defStyleNum="dsKeyword" bold="true"/>
+      <itemData name="Control Flow" defStyleNum="dsControlFlow" bold="true"/>
+      <itemData name="IO" defStyleNum="dsBuiltIn"/>
+      <itemData name="Data Type" defStyleNum="dsDataType"/>
+      <itemData name="Operator" defStyleNum="dsOperator"/>
+      <itemData name="String" defStyleNum="dsString"/>
+      <itemData name="Comment" defStyleNum="dsComment" italic="true"/>
+      <itemData name="Assignment" defStyleNum="dsOperator"/>
+      <itemData name="Number" defStyleNum="dsDecVal"/>
+    </itemDatas>
+  </highlighting>
+  <general>
+    <comments>
+      <comment name="singleLine" start="//"/>
+      <comment name="singleLine" start="#"/>
+      <comment name="multiLine" start="/*" end="*/"/>
+    </comments>
+  </general>
+</language>
+

@@ -1,0 +1,42 @@
+# Configuração do Jekyll para GitHub Pages
+title: "Algoritmos e Lógica Computacional"
+description: "Exemplos e resoluções de exercícios em Portugol"
+baseurl: "/algoritmos-e-logica-computacional"
+url: ""
+
+# Tema e layout
+markdown: kramdown
+highlighter: none  # Vamos usar highlight.js customizado
+
+# Plugins
+plugins:
+  - jekyll-relative-links
+
+# Configurações de coleções para organizar exercícios
+collections:
+  exercicios:
+    output: true
+    permalink: /:collection/:path/
+
+# Defaults para páginas
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: "default"
+  - scope:
+      path: "Exercicios Resolvidos"
+    values:
+      layout: "default"
+
+# Arquivos a incluir (por padrão pastas com espaços podem ser ignoradas)
+include:
+  - "Exercicios Resolvidos"
+
+# Excluir arquivos desnecessários
+exclude:
+  - README.md
+  - portugol.xml
+  - Gemfile
+  - Gemfile.lock
+
