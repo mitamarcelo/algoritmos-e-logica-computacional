@@ -1,6 +1,6 @@
 /**
  * Servidor de desenvolvimento local para preview do site
- * Processa Markdown + YAML front matter e aplica o layout
+ * Usa o mesmo layout do Jekyll (_layouts/default.html)
  */
 
 const express = require('express');
@@ -20,83 +20,16 @@ const wss = new WebSocketServer({ port: 4001 });
 // Servir arquivos estáticos
 app.use('/assets', express.static(path.join(__dirname, 'assets')));
 
-// Template HTML base
-function renderPage(title, content, config) {
-  const baseUrl = config.baseurl || '';
-  
-  return '<!DOCTYPE html>\n' +
-'<html lang="pt-BR">\n' +
-'<head>\n' +
-'  <meta charset="UTF-8">\n' +
-'  <meta name="viewport" content="width=device-width, initial-scale=1.0">\n' +
-'  <title>' + (title ? title + ' | ' : '') + config.title + '</title>\n' +
-'  <meta name="description" content="' + config.description + '">\n' +
-'  \n' +
-'  <!-- Google Fonts -->\n' +
-'  <link rel="preconnect" href="https://fonts.googleapis.com">\n' +
-'  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n' +
-'  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap" rel="stylesheet">\n' +
-'  \n' +
-'  <!-- Highlight.js base -->\n' +
-'  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">\n' +
-'  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>\n' +
-'  \n' +
-'  <!-- Nosso CSS customizado -->\n' +
-'  <link rel="stylesheet" href="' + baseUrl + '/assets/css/style.css">\n' +
-'</head>\n' +
-'<body>\n' +
-'  <nav class="sidebar">\n' +
-'    <div class="sidebar-header">\n' +
-'      <h1>' + config.title + '</h1>\n' +
-'      <p class="tagline">' + config.description + '</p>\n' +
-'    </div>\n' +
-'    <div class="nav-links">\n' +
-'      <a href="' + baseUrl + '/" class="nav-link">\n' +
-'        <span class="icon">📚</span> Início\n' +
-'      </a>\n' +
-'      <a href="' + baseUrl + '/Exercicios%20Resolvidos/Capitulo%208/" class="nav-link">\n' +
-'        <span class="icon">📝</span> Capítulo 8\n' +
-'      </a>\n' +
-'    </div>\n' +
-'  </nav>\n' +
-'\n' +
-'  <main class="content">\n' +
-'    <article>\n' +
-'      ' + (title ? '<header class="page-header"><h1>' + title + '</h1></header>' : '') + '\n' +
-'      <div class="page-content">\n' +
-'        ' + content + '\n' +
-'      </div>\n' +
-'    </article>\n' +
-'  </main>\n' +
-'\n' +
-'  <!-- Highlight.js: definição customizada de Portugol -->\n' +
-'  <script src="' + baseUrl + '/assets/js/portugol.js"></script>\n' +
-'  \n' +
-'  <!-- Botão de copiar código -->\n' +
-'  <script src="' + baseUrl + '/assets/js/copy-code.js"></script>\n' +
-'  \n' +
-'  <script>\n' +
-'    hljs.registerLanguage("portugol", window.hljsPortugol);\n' +
-'    hljs.highlightAll();\n' +
-'    \n' +
-'    // Live reload\n' +
-'    var ws = new WebSocket("ws://localhost:4001");\n' +
-'    ws.onmessage = function() { location.reload(); };\n' +
-'  </script>\n' +
-'</body>\n' +
-'</html>';
-}
-
-// Carregar configuração
+// Carregar configuração do _config.yml
 function loadConfig() {
   try {
-    const configPath = path.join(__dirname, '_config.yml');
-    const configContent = fs.readFileSync(configPath, 'utf-8');
-    const config = {};
+    var configPath = path.join(__dirname, '_config.yml');
+    var configContent = fs.readFileSync(configPath, 'utf-8');
+    var config = {};
     configContent.split('\n').forEach(function(line) {
-      const match = line.match(/^(\w+):\s*"?([^"]+)"?$/);
+      var match = line.match(/^(\w+):\s*"?([^"#]+)"?/);
       if (match) {
-        config[match[1]] = match[2].trim();
+        config[match[1]] = match[2].trim().replace(/^"|"$/g, '');
       }
     });
     return config;
@@ -105,20 +38,81 @@ function loadConfig() {
   }
 }
 
+// Carregar e processar o layout
+function loadLayout() {
+  var layoutPath = path.join(__dirname, '_layouts', 'default.html');
+  return fs.readFileSync(layoutPath, 'utf-8');
+}
+
+// Processar template Jekyll simples
+function processTemplate(template, data) {
+  var result = template;
+  
+  // Processar {% if page.title %} ... {% endif %}
+  result = result.replace(/\{%\s*if\s+page\.title\s*%\}([\s\S]*?)\{%\s*endif\s*%\}/g, function(match, content) {
+    return data.page.title ? content : '';
+  });
+  
+  // Processar {{ variavel | relative_url }}
+  result = result.replace(/\{\{\s*'([^']+)'\s*\|\s*relative_url\s*\}\}/g, function(match, url) {
+    return url; // No servidor local, não precisamos do baseurl
+  });
+  
+  // Processar {{ page.title }}
+  result = result.replace(/\{\{\s*page\.title\s*\}\}/g, data.page.title || '');
+  
+  // Processar {{ site.title }}
+  result = result.replace(/\{\{\s*site\.title\s*\}\}/g, data.site.title || '');
+  
+  // Processar {{ site.description }}
+  result = result.replace(/\{\{\s*site\.description\s*\}\}/g, data.site.description || '');
+  
+  // Processar {{ content }}
+  result = result.replace(/\{\{\s*content\s*\}\}/g, data.content || '');
+  
+  return result;
+}
+
+// Adicionar script de live reload ao HTML
+function addLiveReload(html) {
+  var script = '\n<script>\n' +
+    '  // Live reload para desenvolvimento\n' +
+    '  (function() {\n' +
+    '    var ws = new WebSocket("ws://localhost:4001");\n' +
+    '    ws.onmessage = function() { location.reload(); };\n' +
+    '    ws.onclose = function() {\n' +
+    '      setTimeout(function() { location.reload(); }, 1000);\n' +
+    '    };\n' +
+    '  })();\n' +
+    '</script>\n';
+  
+  return html.replace('</body>', script + '</body>');
+}
+
 // Processar arquivo Markdown
 function processMarkdown(filePath) {
-  const content = fs.readFileSync(filePath, 'utf-8');
-  const parsed = matter(content);
-  const html = marked(parsed.content);
+  var content = fs.readFileSync(filePath, 'utf-8');
+  var parsed = matter(content);
+  var html = marked(parsed.content);
   return { frontMatter: parsed.data, html: html };
+}
+
+// Renderizar página completa
+function renderPage(pageTitle, content, config) {
+  var layout = loadLayout();
+  var data = {
+    page: { title: pageTitle },
+    site: { title: config.title, description: config.description },
+    content: content
+  };
+  
+  var html = processTemplate(layout, data);
+  return addLiveReload(html);
 }
 
 // Rota principal
 app.get('*', function(req, res) {
-  const config = loadConfig();
-  // No servidor local, não usamos baseurl nos links
-  config.baseurl = '';
-  
+  var config = loadConfig();
   var urlPath = decodeURIComponent(req.path);
   
   // Remover o baseurl do início do path (caso venha de links antigos)
@@ -139,13 +133,13 @@ app.get('*', function(req, res) {
     return res.status(404).send('Não encontrado');
   }
   
-  const filePath = path.join(__dirname, urlPath);
+  var filePath = path.join(__dirname, urlPath);
   
   if (!fs.existsSync(filePath)) {
     // Tentar com index.md
-    const indexPath = path.join(__dirname, urlPath.replace('.md', ''), 'index.md');
+    var indexPath = path.join(__dirname, urlPath.replace('.md', ''), 'index.md');
     if (fs.existsSync(indexPath)) {
-      const result = processMarkdown(indexPath);
+      var result = processMarkdown(indexPath);
       return res.send(renderPage(result.frontMatter.title, result.html, config));
     }
     return res.status(404).send(
@@ -156,7 +150,7 @@ app.get('*', function(req, res) {
   }
   
   try {
-    const result = processMarkdown(filePath);
+    var result = processMarkdown(filePath);
     res.send(renderPage(result.frontMatter.title, result.html, config));
   } catch (err) {
     res.status(500).send('Erro ao processar: ' + err.message);
@@ -164,7 +158,12 @@ app.get('*', function(req, res) {
 });
 
 // Watch para mudanças e live reload
-chokidar.watch(['./**/*.md', './assets/**/*', './_config.yml'], {
+chokidar.watch([
+  './**/*.md',
+  './assets/**/*',
+  './_layouts/**/*',
+  './_config.yml'
+], {
   ignored: /node_modules/,
 }).on('change', function(changedPath) {
   console.log('📝 Arquivo alterado: ' + changedPath);
@@ -179,9 +178,10 @@ app.listen(PORT, function() {
   console.log('║                                                            ║');
   console.log('║   Acesse: http://localhost:' + PORT + '                          ║');
   console.log('║                                                            ║');
-  console.log('║   As alterações nos arquivos .md são recarregadas          ║');
-  console.log('║   automaticamente no navegador.                            ║');
+  console.log('║   Layout: _layouts/default.html                            ║');
+  console.log('║   Config: _config.yml                                      ║');
   console.log('║                                                            ║');
+  console.log('║   Alterações são recarregadas automaticamente.             ║');
   console.log('║   Pressione Ctrl+C para parar.                             ║');
   console.log('║                                                            ║');
   console.log('╚════════════════════════════════════════════════════════════╝');

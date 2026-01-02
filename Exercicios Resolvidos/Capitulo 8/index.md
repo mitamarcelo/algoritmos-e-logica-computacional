@@ -8,4 +8,4 @@ Neste capítulo, exploramos estruturas de repetições, fundamentais para contro
 
 ## Exercícios Resolvidos
 
-1. [Exercício 1 — Andar em um tabuleiro](exercicio-1)
+1. [Exercício 12 — Andar em um tabuleiro](exercicio-12)
