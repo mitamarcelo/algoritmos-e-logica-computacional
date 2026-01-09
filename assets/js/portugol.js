@@ -6,7 +6,8 @@ window.hljsPortugol = function(hljs) {
   // Palavras-chave de estrutura
   const STRUCTURE = [
     'Algoritmo', 'Inicio', 'Fim', 'Entrada', 'Saida', 
-    'Var', 'Procedimento', 'Funcao', 'Retorne'
+    'Var', 'Procedimento', 'Funcao', 'FimFuncao', 
+    'FimProcedimento', 'Retorne'
   ];
 
   // Palavras-chave de controle de fluxo
@@ -16,7 +17,7 @@ window.hljsPortugol = function(hljs) {
     'Para', 'FimPara', 'De', 'Ate', 'Passo', 'Faca',
     'ParaCada', 'Em', 'FimParaCada',
     'Repita', 'AteQue',
-    'Escolha', 'Caso', 'FimEscolha',
+    'Escolha', 'Caso', 'FimEscolha', 'Caso Outro',
     'Pare', 'Continue'
   ];
 
@@ -74,6 +75,11 @@ window.hljsPortugol = function(hljs) {
       {
         className: 'operator',
         begin: /<-/
+      },
+       // Operador de concatenação <<
+       {
+        className: 'operator',
+        begin: /<</
       },
       // Strings
       {
